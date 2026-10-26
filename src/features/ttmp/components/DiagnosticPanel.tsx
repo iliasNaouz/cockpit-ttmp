@@ -7,27 +7,34 @@ import { cn } from '@/lib/utils'
 import type { Rating } from '@/types/domain'
 import { useDiagnostic } from '../hooks/useDiagnostic'
 import { useEvaluation } from '../hooks/useEvaluation'
+import { useFitText } from '../hooks/useFitText'
 import { isEvaluationComplete, type PartialEvaluation } from '../utils/evaluation'
 import { DashCard } from './DashCard'
 import { DiagnosticBlock, type BlockKind } from './DiagnosticBlock'
 import { DiagnosticFooter } from './DiagnosticFooter'
 
-/** Ordre d'affichage : Diagnostic, Action recommandée, Pourquoi cette action. */
-const BLOCKS: Array<{ kind: BlockKind; label: string; field: 'diagnostic' | 'action' | 'why' }> = [
+type Field = 'diagnostic' | 'action' | 'rationale'
+
+const BLOCKS: Array<{ kind: BlockKind; label: string; field: Field }> = [
   { kind: 'diagnostic', label: 'DIAGNOSTIC', field: 'diagnostic' },
   { kind: 'action', label: 'ACTION RECOMMANDÉE', field: 'action' },
-  { kind: 'why', label: 'POURQUOI CETTE ACTION', field: 'why' },
+  { kind: 'rationale', label: 'POURQUOI CETTE ACTION', field: 'rationale' },
 ]
 
-/** Carte « Diagnostic & Actions » : les 3 blocs sont toujours visibles et se partagent la hauteur. */
+/**
+ * Carte « Diagnostic & Actions » : 3 blocs empilés qui se partagent la hauteur à parts égales.
+ * La taille du texte s'adapte pour que tout tienne dans la carte, sans scroll ni coupure.
+ */
 export function DiagnosticPanel({ className }: { className?: string }) {
   const { site } = useSite()
   const { canWrite } = usePermission('ttmp')
   const { diagnostic, isLoading, refresh } = useDiagnostic()
   const [ratings, setRatings] = useState<PartialEvaluation>({})
   const evaluation = useEvaluation(() => setRatings({}))
+  // Taille de police commune aux 3 paragraphes ; recalculée au changement de diagnostic.
+  const { fontSize, register } = useFitText(BLOCKS.length, [diagnostic?.updatedAt, isLoading])
 
-  const rate = (field: keyof PartialEvaluation, rating: Rating) => setRatings((previous) => ({ ...previous, [field]: rating }))
+  const rate = (field: Field, rating: Rating) => setRatings((previous) => ({ ...previous, [field]: rating }))
   const refreshAndReset = () => {
     setRatings({})
     refresh()
@@ -37,7 +44,7 @@ export function DiagnosticPanel({ className }: { className?: string }) {
     <DashCard
       className={className}
       scroll={false}
-      bodyClassName="flex flex-col gap-2.5 p-3"
+      bodyClassName="flex flex-col gap-2.5 overflow-hidden px-4 py-3"
       title={`Diagnostic & Actions — ${site.lineName}`}
       actions={
         <>
@@ -54,21 +61,20 @@ export function DiagnosticPanel({ className }: { className?: string }) {
         </>
       }
     >
-      <div className="flex min-h-0 flex-1 flex-col gap-2.5">
-        {BLOCKS.map(({ kind, label, field }) => (
-          <DiagnosticBlock
-            key={kind}
-            kind={kind}
-            label={label}
-            text={diagnostic?.[field]}
-            loading={isLoading}
-            rating={ratings[field]}
-            onRate={(rating) => rate(field, rating)}
-            canWrite={canWrite}
-            className="min-h-[72px] flex-1"
-          />
-        ))}
-      </div>
+      {BLOCKS.map(({ kind, label, field }, index) => (
+        <DiagnosticBlock
+          key={kind}
+          kind={kind}
+          label={label}
+          summary={diagnostic?.[field].summary}
+          loading={isLoading}
+          rating={ratings[field]}
+          onRate={(rating) => rate(field, rating)}
+          canWrite={canWrite}
+          fontSize={fontSize}
+          registerText={register(index)}
+        />
+      ))}
       <DiagnosticFooter
         ratings={ratings}
         canWrite={canWrite}

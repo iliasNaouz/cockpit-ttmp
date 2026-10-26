@@ -81,20 +81,20 @@ describe('canAccessSite', () => {
 
 describe('modules visibles et routes', () => {
   it('masque Utilisateurs pour un opérateur', () => {
-    expect(getVisibleModules(makeUser('operateur'))).toEqual(['ttmp', 'thermal', 'chat', 'projets'])
+    expect(getVisibleModules(makeUser('operateur'))).toEqual(['ttmp', 'thermal', 'historique', 'chat', 'projets'])
   })
 
   it('masque Chat pour un lecteur', () => {
-    expect(getVisibleModules(makeUser('lecteur'))).toEqual(['ttmp', 'thermal', 'projets'])
+    expect(getVisibleModules(makeUser('lecteur'))).toEqual(['ttmp', 'thermal', 'historique', 'projets'])
   })
 
   it('redirige vers le premier module autorisé', () => {
     expect(firstAllowedRoute(makeUser('operateur'))).toBe('/ttmp')
-    expect(firstAllowedRoute(makeUser('chef_projet', { ttmp: 'aucun', thermal: 'aucun' }))).toBe('/chat')
+    expect(firstAllowedRoute(makeUser('chef_projet', { ttmp: 'aucun', thermal: 'aucun', historique: 'aucun' }))).toBe('/chat')
   })
 
   it('renvoie la page d’accès refusé sans aucun module', () => {
-    const none = makeUser('lecteur', { ttmp: 'aucun', thermal: 'aucun', projets: 'aucun' })
+    const none = makeUser('lecteur', { ttmp: 'aucun', thermal: 'aucun', historique: 'aucun', projets: 'aucun' })
     expect(firstAllowedRoute(none)).toBe(ACCESS_DENIED_ROUTE)
   })
 })

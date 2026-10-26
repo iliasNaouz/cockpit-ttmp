@@ -32,7 +32,7 @@
   --color-brand: #4F46E5;
   --color-brand-hover: #4338CA;
   --color-brand-soft: #EEF2FF;
-  --color-brand-border: #C7D2FE;
+  --color-brand-border: #E0E7FF;
   --color-brand-accent: #6366F1;
 
   /* Leviers : barre / point */
@@ -94,6 +94,12 @@
   --color-alert-bg: #FEF2F2;
   --color-alert-border: #FECACA;
   --color-alert-text: #DC2626;
+
+  /* Changement d'initiative (historique des leviers) : violet */
+  --color-initiative: #9333EA;
+  --color-initiative-bg: #FAF5FF;
+  --color-initiative-border: #E9D5FF;
+  --color-initiative-text: #7E22CE;
 
   /* Blocs diagnostic */
   --color-diag-info-bg: #EEF2FF;
@@ -238,6 +244,11 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Fondu bas (28px) appliqué à un texte tronqué, pour signaler qu'il continue. */
+@utility fade-bottom {
+  mask-image: linear-gradient(to bottom, black calc(100% - 28px), transparent);
 }
 
 /* Scrollbar fine (6px) pour les blocs qui défilent en interne. */

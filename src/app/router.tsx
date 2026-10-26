@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { AccessDenied, NotFound } from '@/components/shared/AccessDenied'
 import {
   ChatPage,
+  LeverHistoryPage,
   LoginPage,
   ProjectDetailRoute,
   ProjectsOverviewPage,
@@ -32,6 +33,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <HomeRedirect /> },
           { path: 'ttmp', element: <Guarded module="ttmp"><TtmpPage /></Guarded> },
           { path: 'thermal', element: <Guarded module="thermal"><ThermalDashboardPage /></Guarded> },
+          { path: 'historique-leviers', element: <Guarded module="historique"><LeverHistoryPage /></Guarded> },
           { path: 'chat/:conversationId?', element: <Guarded module="chat"><ChatPage /></Guarded> },
           { path: 'projets', element: <Guarded module="projets"><ProjectsOverviewPage /></Guarded> },
           { path: 'projets/:siteId', element: <Guarded module="projets"><ProjectDetailRoute /></Guarded> },

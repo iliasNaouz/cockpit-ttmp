@@ -13,3 +13,6 @@ export const ProjectDetailRoute = lazy(() =>
   import('@/features/projects/ProjectDetailRoute').then((m) => ({ default: m.ProjectDetailRoute })),
 )
 export const UsersPage = lazy(() => import('@/features/users/UsersPage').then((m) => ({ default: m.UsersPage })))
+export const LeverHistoryPage = lazy(() =>
+  import('@/features/lever-history/LeverHistoryPage').then((m) => ({ default: m.LeverHistoryPage })),
+)

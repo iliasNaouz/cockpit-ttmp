@@ -1,4 +1,6 @@
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
+import { History } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { MonoValue } from '@/components/shared/MonoValue'
 import { ReadOnlyGuard } from '@/components/shared/ReadOnlyGuard'
 import { cn } from '@/lib/utils'
@@ -17,16 +19,31 @@ interface ZonedSliderProps {
   value: number
   onChange: (value: number) => void
   canWrite: boolean
+  /** Si fourni, le nom devient un lien vers l'historique de ce levier. */
+  historyLeverId?: string
 }
 
 /** Levier de 34px : libellé (16px) + valeur mono sur une ligne, slider à piste 3 zones (18px) dessous. */
-export function ZonedSlider({ label, value, onChange, canWrite }: ZonedSliderProps) {
+export function ZonedSlider({ label, value, onChange, canWrite, historyLeverId }: ZonedSliderProps) {
+  const labelClass = cn('min-w-0 truncate text-ink-body', label.length > LONG_LABEL ? 'text-[11px]' : 'text-xs')
+
   return (
     <div className="group h-[30px]">
       <div className="flex h-3.5 items-center justify-between gap-2">
-        <span className={cn('min-w-0 truncate text-ink-body', label.length > LONG_LABEL ? 'text-[11px]' : 'text-xs')} title={label}>
-          {label}
-        </span>
+        {historyLeverId ? (
+          <Link
+            to={`/historique-leviers?lever=${historyLeverId}&period=6h`}
+            title={`Historique de ${label}`}
+            className={cn(labelClass, 'inline-flex items-center gap-1 hover:text-brand')}
+          >
+            <span className="truncate">{label}</span>
+            <History className="size-3 shrink-0 text-ink-mute opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+          </Link>
+        ) : (
+          <span className={labelClass} title={label}>
+            {label}
+          </span>
+        )}
         <MonoValue className="shrink-0 text-xs font-semibold text-ink">{value} %</MonoValue>
       </div>
       <ReadOnlyGuard canWrite={canWrite} className="flex h-4 w-full">

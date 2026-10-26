@@ -24,6 +24,13 @@ export const MODULES: Record<ModuleId, ModuleMeta> = {
     description: 'Télémétrie prédictive et journal des recommandations.',
     route: '/thermal',
   },
+  historique: {
+    id: 'historique',
+    label: 'Historique',
+    navLabel: 'Historique leviers',
+    description: 'Évolution des leviers, recommandations suivies et effets sur le procédé.',
+    route: '/historique-leviers',
+  },
   chat: {
     id: 'chat',
     label: 'Chat',
@@ -48,4 +55,4 @@ export const MODULES: Record<ModuleId, ModuleMeta> = {
 }
 
 /** Ordre d'affichage (sidebar, matrices). */
-export const MODULE_ORDER: ModuleId[] = ['ttmp', 'thermal', 'chat', 'projets', 'utilisateurs']
+export const MODULE_ORDER: ModuleId[] = ['ttmp', 'thermal', 'historique', 'chat', 'projets', 'utilisateurs']

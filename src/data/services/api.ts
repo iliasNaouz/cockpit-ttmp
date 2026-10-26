@@ -33,8 +33,10 @@ import type {
   TelemetryPoint,
   TtmpStatus,
 } from '@/types/domain'
+import type { LeverHistoryData } from '@/types/lever-history'
 import type { Milestone, Project, Task, TaskStatus } from '@/types/project'
 import { buildAccessLog } from '../mock/access-log'
+import { LEVER_HISTORY } from '../mock/lever-history'
 import { CHAT_ANSWERS, FALLBACK_ANSWER, type AnswerEntry } from '../mock/chat-answers'
 import { CONVERSATIONS } from '../mock/conversations'
 import { DIAGNOSTIC } from '../mock/diagnostic'
@@ -214,6 +216,29 @@ export async function getAgentHealth(siteId: SiteId): Promise<AgentHealth> {
   void siteId
   await wait()
   return clone(AGENT_HEALTH)
+}
+
+// ------------------------------------------------------ Historique leviers
+
+export async function getLeverHistory(siteId: SiteId, from?: string, to?: string): Promise<LeverHistoryData> {
+  await wait()
+  const data = LEVER_HISTORY[siteId] ?? LEVER_HISTORY.begles
+  if (!from && !to) return clone(data)
+  // Filtrage temporel : ne garder que ce qui tombe dans la fenêtre demandée.
+  const start = from ? Date.parse(from) : -Infinity
+  const end = to ? Date.parse(to) : Infinity
+  const inWindow = (t: string) => {
+    const ms = Date.parse(t)
+    return ms >= start && ms <= end
+  }
+  return clone({
+    defs: data.defs,
+    series: data.series.map((serie) => ({ ...serie, points: serie.points.filter((point) => inWindow(point.t)) })),
+    changes: data.changes.filter((change) => inWindow(change.t)),
+    recos: data.recos.filter((reco) => inWindow(reco.t)),
+    steam: data.steam.filter((point) => inWindow(point.t)),
+    o2: data.o2.filter((point) => inWindow(point.t)),
+  })
 }
 
 export interface NewRecommendationInput {

@@ -12,6 +12,7 @@ export const ROLE_DEFAULTS: Record<Role, Record<ModuleId, AccessLevel>> = {
   administrateur: {
     ttmp: 'ecriture',
     thermal: 'ecriture',
+    historique: 'ecriture',
     chat: 'ecriture',
     projets: 'ecriture',
     utilisateurs: 'ecriture',
@@ -19,6 +20,7 @@ export const ROLE_DEFAULTS: Record<Role, Record<ModuleId, AccessLevel>> = {
   chef_projet: {
     ttmp: 'lecture',
     thermal: 'lecture',
+    historique: 'lecture',
     chat: 'ecriture',
     projets: 'ecriture',
     utilisateurs: 'aucun',
@@ -26,6 +28,7 @@ export const ROLE_DEFAULTS: Record<Role, Record<ModuleId, AccessLevel>> = {
   operateur: {
     ttmp: 'ecriture',
     thermal: 'ecriture',
+    historique: 'ecriture',
     chat: 'ecriture',
     projets: 'lecture',
     utilisateurs: 'aucun',
@@ -33,6 +36,7 @@ export const ROLE_DEFAULTS: Record<Role, Record<ModuleId, AccessLevel>> = {
   lecteur: {
     ttmp: 'lecture',
     thermal: 'lecture',
+    historique: 'lecture',
     chat: 'aucun',
     projets: 'lecture',
     utilisateurs: 'aucun',

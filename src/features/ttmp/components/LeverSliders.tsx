@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { LeverTab } from '@/types/domain'
-import { LEVER_TABS } from '../config/lever-tabs'
+import { LEVER_TABS, SLIDER_TO_HISTORY } from '../config/lever-tabs'
 import { useSliderLevers } from '../hooks/useTtmpData'
 import { DashCard } from './DashCard'
 import { ZonedSlider } from './ZonedSlider'
@@ -63,6 +63,7 @@ export function LeverSliders({ className }: { className?: string }) {
             label={lever.label}
             value={edited[lever.id] ?? lever.value}
             canWrite={canWrite}
+            historyLeverId={SLIDER_TO_HISTORY[lever.id]}
             onChange={(value) => setEdited((previous) => ({ ...previous, [lever.id]: value }))}
           />
         ))}

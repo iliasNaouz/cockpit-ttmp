@@ -2,7 +2,7 @@ import type { SiteId } from './domain'
 
 export type Role = 'administrateur' | 'chef_projet' | 'operateur' | 'lecteur'
 
-export type ModuleId = 'ttmp' | 'thermal' | 'chat' | 'projets' | 'utilisateurs'
+export type ModuleId = 'ttmp' | 'thermal' | 'historique' | 'chat' | 'projets' | 'utilisateurs'
 
 export type AccessLevel = 'aucun' | 'lecture' | 'ecriture'
 

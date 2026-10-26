@@ -1,4 +1,4 @@
-import { Activity, FileText, SlidersHorizontal, TrendingUp, type LucideIcon } from 'lucide-react'
+import { Activity, FileText, History, SlidersHorizontal, TrendingUp, type LucideIcon } from 'lucide-react'
 
 interface Suggestion {
   icon: LucideIcon
@@ -11,6 +11,7 @@ const SUGGESTIONS: Suggestion[] = [
   { icon: TrendingUp, title: 'Prévision vapeur 15 min', description: "Expliquer l'écart avec la consigne" },
   { icon: SlidersHorizontal, title: 'Quel levier actionner ?', description: "Comparer les recommandations de l'agent" },
   { icon: FileText, title: 'Résumé de la dernière heure', description: 'Synthèse des évènements et alarmes' },
+  { icon: History, title: "Quelles recos n'ont pas été suivies aujourd'hui ?", description: "Lister les recommandations ignorées ou contraires" },
 ]
 
 interface SuggestionChipsProps {

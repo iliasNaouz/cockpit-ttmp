@@ -1,4 +1,5 @@
-import { Activity, ChevronDown, ChevronUp, Pencil, Trash2 } from 'lucide-react'
+import { Activity, ChevronDown, ChevronUp, History, Pencil, Trash2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { usePermission } from '@/auth/usePermission'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
@@ -95,6 +96,7 @@ export function RecoDetailSheet({ reco, navigable, allRecos, startInEdit, onSele
         <>
           <button type="button" className={ICON_BUTTON} aria-label="Reco précédente" disabled={!previous} onClick={() => previous && onSelect(previous)}><ChevronUp className="size-4" aria-hidden /></button>
           <button type="button" className={ICON_BUTTON} aria-label="Reco suivante" disabled={!next} onClick={() => next && onSelect(next)}><ChevronDown className="size-4" aria-hidden /></button>
+          <Link to="/historique-leviers?period=6h" className={ICON_BUTTON} aria-label="Voir dans l'historique"><History className="size-4" aria-hidden /></Link>
           <ReadOnlyGuard canWrite={canWrite}>
             <button type="button" className={ICON_BUTTON} aria-label="Modifier" aria-pressed={editing} disabled={!canWrite} onClick={() => setEditing((value) => !value)}><Pencil className="size-4" aria-hidden /></button>
           </ReadOnlyGuard>

@@ -107,17 +107,25 @@ export interface StabilityPoint {
 
 export type Rating = 'up' | 'down'
 
+/** Bloc de diagnostic : un paragraphe court, affiché seul (sans chips ni éléments annexes). */
+export interface DiagnosticBlock {
+  /** Paragraphe court, 280 caractères max. */
+  summary: string
+}
+
 export interface Diagnostic {
-  diagnostic: string
-  action: string
-  why: string
+  diagnostic: DiagnosticBlock
+  action: DiagnosticBlock
+  rationale: DiagnosticBlock
   generatedAt: string
-  /** Date ISO de la dernière génération */
+  /** Date ISO de la dernière génération. */
   updatedAt: string
+  /** Textes longs conservés pour l'API, non affichés dans le panneau compact. */
+  fullText: { diagnostic: string; action: string; rationale: string }
 }
 
 export interface Evaluation {
   diagnostic: Rating
   action: Rating
-  why: Rating
+  rationale: Rating
 }

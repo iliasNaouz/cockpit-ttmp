@@ -8,9 +8,11 @@ interface ProgressBarProps {
   /** Hauteur : 6px par défaut, 8px pour les cartes de projet. */
   size?: 'sm' | 'md'
   label?: string
+  /** Repère vertical (ex. cible) à ce pourcentage, 0 à 100. */
+  marker?: number
 }
 
-export function ProgressBar({ value, barClassName = 'bg-brand', size = 'sm', label }: ProgressBarProps) {
+export function ProgressBar({ value, barClassName = 'bg-brand', size = 'sm', label, marker }: ProgressBarProps) {
   const clamped = Math.min(100, Math.max(0, value))
   return (
     <div
@@ -19,9 +21,12 @@ export function ProgressBar({ value, barClassName = 'bg-brand', size = 'sm', lab
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label}
-      className={cn('w-full overflow-hidden rounded-full bg-surface-muted', size === 'sm' ? 'h-1.5' : 'h-2')}
+      className={cn('relative w-full overflow-hidden rounded-full bg-surface-muted', size === 'sm' ? 'h-1.5' : 'h-2')}
     >
       <div className={cn('h-full rounded-full', barClassName)} style={{ width: `${clamped}%` }} />
+      {marker !== undefined && (
+        <span className="absolute inset-y-0 w-px bg-ink-mute" style={{ left: `${Math.min(100, Math.max(0, marker))}%` }} aria-hidden />
+      )}
     </div>
   )
 }

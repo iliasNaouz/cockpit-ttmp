@@ -93,3 +93,94 @@ export function placeCurrentLabel(
 
 /** Sous cette largeur de carte, le diagramme passe en mode compact (moins de détails). */
 export const COMPACT_BELOW_WIDTH = 480
+
+// --------------------------------------------------------------------------
+// Gestionnaire de collisions des étiquettes du diagramme
+// --------------------------------------------------------------------------
+
+export interface Box {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface LabelCandidate<T = string> {
+  id: T
+  /** Positions possibles, de la plus souhaitée à la moins souhaitée. */
+  positions: Box[]
+}
+
+export interface PlacedLabel<T = string> {
+  id: T
+  /** Boîte retenue, ou `null` si le label est masqué (affiché au survol). */
+  box: Box | null
+}
+
+function overlaps(a: Box, b: Box, gap = 2): boolean {
+  return !(a.x + a.width + gap <= b.x || b.x + b.width + gap <= a.x || a.y + a.height + gap <= b.y || b.y + b.height + gap <= a.y)
+}
+
+/**
+ * Place une liste d'étiquettes par ordre de priorité. Chaque étiquette prend sa première
+ * position candidate qui ne chevauche aucune déjà placée ; si aucune ne convient, elle est masquée.
+ */
+export function placeLabels<T>(candidates: LabelCandidate<T>[], gap = 2): PlacedLabel<T>[] {
+  const placed: Box[] = []
+  return candidates.map((candidate) => {
+    const box = candidate.positions.find((option) => placed.every((other) => !overlaps(option, other, gap))) ?? null
+    if (box) placed.push(box)
+    return { id: candidate.id, box }
+  })
+}
+
+/** Génère les 4 coins candidats (ordre : haut-droite, haut-gauche, bas-droite, bas-gauche) autour d'un point. */
+export function cornerPositions(cx: number, cy: number, width: number, height: number, offset = 12): Box[] {
+  return [
+    { x: cx + offset, y: cy - offset - height, width, height },
+    { x: cx - offset - width, y: cy - offset - height, width, height },
+    { x: cx + offset, y: cy + offset, width, height },
+    { x: cx - offset - width, y: cy + offset, width, height },
+  ]
+}
+
+export interface Segment {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+function segmentsCrossBox(box: Box, segments: Segment[]): number {
+  const { x, y, width, height } = box
+  const edges: Segment[] = [
+    { x1: x, y1: y, x2: x + width, y2: y },
+    { x1: x + width, y1: y, x2: x + width, y2: y + height },
+    { x1: x + width, y1: y + height, x2: x, y2: y + height },
+    { x1: x, y1: y + height, x2: x, y2: y },
+  ]
+  const ccw = (ax: number, ay: number, bx: number, by: number, cx: number, cy: number) =>
+    (cy - ay) * (bx - ax) > (by - ay) * (cx - ax)
+  const intersects = (a: Segment, b: Segment) =>
+    ccw(a.x1, a.y1, b.x1, b.y1, b.x2, b.y2) !== ccw(a.x2, a.y2, b.x1, b.y1, b.x2, b.y2) &&
+    ccw(a.x1, a.y1, a.x2, a.y2, b.x1, b.y1) !== ccw(a.x1, a.y1, a.x2, a.y2, b.x2, b.y2)
+  return segments.reduce((count, segment) => count + edges.filter((edge) => intersects(edge, segment)).length, 0)
+}
+
+/**
+ * Choisit, parmi 4 coins, celui dont la pill « Actuel » croise le moins de courbes :
+ * ainsi le label ne passe (presque) jamais sur un tracé.
+ */
+export function pickCurrentCorner(corners: Box[], curves: Segment[]): Box {
+  let best = corners[0]
+  let bestScore = Number.POSITIVE_INFINITY
+  for (const corner of corners) {
+    const score = segmentsCrossBox(corner, curves)
+    if (score < bestScore) {
+      best = corner
+      bestScore = score
+    }
+    if (score === 0) break
+  }
+  return best
+}

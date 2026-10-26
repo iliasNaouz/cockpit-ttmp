@@ -1,18 +1,36 @@
 import { describe, expect, it } from 'vitest'
-import { getDeltaTone, getO2Tone, isO2Low } from './kpi'
+import { getKpiStatus, isO2Low } from './kpi'
 
-describe('kpi ttmp', () => {
-  it('colore l’écart selon 1 t/h', () => {
-    expect(getDeltaTone(0.78)).toBe('success')
-    expect(getDeltaTone(-1)).toBe('success')
-    expect(getDeltaTone(1.01)).toBe('warning')
-    expect(getDeltaTone(-2)).toBe('warning')
+describe('getKpiStatus', () => {
+  it('note l’écart selon 0,5 et 1,5 t/h', () => {
+    expect(getKpiStatus('ecart', 0.5)).toBe('bon')
+    expect(getKpiStatus('ecart', -0.5)).toBe('bon')
+    expect(getKpiStatus('ecart', 1)).toBe('surveiller')
+    expect(getKpiStatus('ecart', -1.5)).toBe('surveiller')
+    expect(getKpiStatus('ecart', 2)).toBe('alerte')
   })
 
-  it('colore l’O₂ selon le seuil de 5 %', () => {
-    expect(getO2Tone(4.23, 5)).toBe('danger')
-    expect(getO2Tone(5, 5)).toBe('success')
-    expect(isO2Low(4.99, 5)).toBe(true)
-    expect(isO2Low(5.2, 5)).toBe(false)
+  it('note l’O₂ selon les seuils 5 % et 4,5 %', () => {
+    expect(getKpiStatus('o2', 5)).toBe('bon')
+    expect(getKpiStatus('o2', 4.7)).toBe('surveiller')
+    expect(getKpiStatus('o2', 4.23)).toBe('alerte')
+  })
+
+  it('note la stabilité selon 95 % et 85 %', () => {
+    expect(getKpiStatus('stabilite', 99)).toBe('bon')
+    expect(getKpiStatus('stabilite', 90)).toBe('surveiller')
+    expect(getKpiStatus('stabilite', 80)).toBe('alerte')
+  })
+
+  it('reste neutre pour les KPI informatifs', () => {
+    expect(getKpiStatus('neutre', 36.78)).toBe('normal')
+  })
+})
+
+describe('isO2Low', () => {
+  it('détecte un O₂ sous le seuil de 5 %', () => {
+    expect(isO2Low(4.23)).toBe(true)
+    expect(isO2Low(5)).toBe(false)
+    expect(isO2Low(4.9, 4.8)).toBe(false)
   })
 })
